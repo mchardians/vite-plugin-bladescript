@@ -1,26 +1,22 @@
 import path from 'path';
 import fg from 'fast-glob';
 
-export default function laravelBladeJavascriptPlugin(options = {}) {
+export default function vitePluginBladeScript(options = {}) {
     const jsPath = options.jsPath || 'resources/js/**/*.js';
 
     return {
         name: 'vite-plugin-blade-script',
         
-        config: (config) => {
+        config: () => {
             const jsFiles = fg.sync(jsPath);
             
-            if (!config.build) config.build = {};
-            if (!config.build.rollupOptions) config.build.rollupOptions = {};
-            
-            const existingInputs = Array.isArray(config.build.rollupOptions.input) 
-                ? config.build.rollupOptions.input 
-                : [];
-
-            config.build.rollupOptions.input = [
-                ...existingInputs,
-                ...jsFiles
-            ];
+            return {
+                build: {
+                    rollupOptions: {
+                        input: jsFiles
+                    }
+                }
+            };
         },
 
         resolveId(source) {
