@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-blade-script",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Vite plugin to automatically resolve and transform JavaScript imports in Laravel Blade templates",
   "main": "src/index.js",
   "scripts": {
