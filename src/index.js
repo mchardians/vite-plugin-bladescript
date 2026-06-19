@@ -1,22 +1,8 @@
-import fs from 'fs';
 import path from 'path';
 import fg from 'fast-glob';
-import { transformBladeImports } from './transformer.js';
 
-export default function vitePluginBladeScript(options = {}) {
-    const viewsPath = options.viewsPath || 'resources/views/**/*.blade.php';
+export default function laravelBladeJavascriptPlugin(options = {}) {
     const jsPath = options.jsPath || 'resources/js/**/*.js';
-
-    const processBladeFile = (absolutePath) => {
-        const content = fs.readFileSync(absolutePath, 'utf-8');
-        const transformed = transformBladeImports(content);
-
-        if (content !== transformed) {
-            fs.writeFileSync(absolutePath, transformed, 'utf-8');
-            return true;
-        }
-        return false;
-    };
 
     return {
         name: 'vite-plugin-blade-script',
@@ -42,24 +28,6 @@ export default function vitePluginBladeScript(options = {}) {
                 return source.replace('@', path.resolve(process.cwd(), 'resources/js'));
             }
             return null;
-        },
-
-        buildStart() {
-            const files = fg.sync(viewsPath);
-            files.forEach(file => {
-                processBladeFile(path.resolve(process.cwd(), file));
-            });
-        },
-
-        handleHotUpdate({ file, server }) {
-
-            if (file.endsWith('.blade.php')) {
-                const wasModified = processBladeFile(file);
-
-                if (wasModified) {
-                    return [];
-                }
-            }
         }
     };
 }
