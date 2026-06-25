@@ -3,7 +3,7 @@ import { build } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import fs from 'fs';
 import path from 'path';
-import vitePluginBladeScript from '../src/index.js';
+import { vitePluginLaravelBladeScript } from '../src/index.js';
 
 describe('Vite Plugin Auto-Registration', () => {
     const cwd = process.cwd();
@@ -28,7 +28,7 @@ describe('Vite Plugin Auto-Registration', () => {
         await build({
             root: cwd,
             plugins: [
-                vitePluginBladeScript(),
+                vitePluginLaravelBladeScript(),
                 laravel({
                     input: [],
                     publicDirectory: 'public',

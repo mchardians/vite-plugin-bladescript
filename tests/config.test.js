@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import laravelBladeJavascriptPlugin from '../src/index.js';
+import { vitePluginLaravelBladeScript } from '../src/index.js';
 import fg from 'fast-glob';
+import path from 'path';
 
 vi.mock('fast-glob', () => {
     return {
@@ -21,7 +22,7 @@ describe('Vite Plugin Config Resolution', () => {
             'resources/js/components/Alert.js'
         ]);
 
-        const plugin = laravelBladeJavascriptPlugin();
+        const plugin = vitePluginLaravelBladeScript();
 
         const mockConfig = {
             build: {
@@ -43,7 +44,7 @@ describe('Vite Plugin Config Resolution', () => {
     it('normalizes string input into array before merging', () => {
         fg.sync.mockReturnValue(['resources/js/components/Alert.js']);
 
-        const plugin = laravelBladeJavascriptPlugin();
+        const plugin = vitePluginLaravelBladeScript();
 
         const mockConfig = {
             build: {
@@ -64,7 +65,7 @@ describe('Vite Plugin Config Resolution', () => {
     it('normalizes object input into array before merging', () => {
         fg.sync.mockReturnValue(['resources/js/components/Alert.js']);
 
-        const plugin = laravelBladeJavascriptPlugin();
+        const plugin = vitePluginLaravelBladeScript();
 
         const mockConfig = {
             build: {
@@ -89,7 +90,7 @@ describe('Vite Plugin Config Resolution', () => {
     it('automatically sets preserveEntrySignatures to strict to prevent export stripping', () => {
         fg.sync.mockReturnValue(['resources/js/components/Alert.js']);
 
-        const plugin = laravelBladeJavascriptPlugin();
+        const plugin = vitePluginLaravelBladeScript();
 
         const mockConfig = {
             build: {
@@ -102,5 +103,15 @@ describe('Vite Plugin Config Resolution', () => {
         plugin.configResolved(mockConfig);
 
         expect(mockConfig.build.rollupOptions.preserveEntrySignatures).toBe('strict');
+    });
+
+    it('respects custom entryPoints option pattern', () => {
+        const customPattern = 'frontend/scripts/**/*.js';
+        const plugin = vitePluginLaravelBladeScript({ entryPoints: customPattern });
+        const mockConfig = { build: { rollupOptions: { input: [] } } };
+        
+        plugin.configResolved(mockConfig);
+        
+        expect(fg.sync).toHaveBeenCalledWith(customPattern);
     });
 });

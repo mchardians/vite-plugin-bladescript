@@ -1,14 +1,15 @@
 import path from 'path';
 import fg from 'fast-glob';
 
-export default function vitePluginBladeScript(options = {}) {
-    const jsPath = options.jsPath || 'resources/js/**/*.js';
+function vitePluginLaravelBladeScript(options = {}) {
+    const entryPointsPattern = options.entryPoints || 'resources/js/**/*.js';
 
     return {
-        name: 'vite-plugin-blade-script',
+        name: 'vite-plugin-bladescript',
         
         configResolved(config) {
-            const jsFiles = fg.sync(jsPath);
+            
+            const autoDiscoveredEntries = fg.sync(entryPointsPattern);
             
             let input = config.build.rollupOptions.input || [];
             
@@ -18,14 +19,11 @@ export default function vitePluginBladeScript(options = {}) {
                 input = Object.values(input);
             }
 
-            config.build.rollupOptions.input = [...new Set([...input, ...jsFiles])];
+            config.build.rollupOptions.input = [...new Set([...input, ...autoDiscoveredEntries])];
+            
             config.build.rollupOptions.preserveEntrySignatures = 'strict';
-        },
-        resolveId(source) {
-            if (source.startsWith('@/')) {
-                return source.replace('@', path.resolve(process.cwd(), 'resources/js'));
-            }
-            return null;
         }
     };
 }
+
+export { vitePluginLaravelBladeScript };

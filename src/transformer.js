@@ -1,4 +1,4 @@
-export function transformBladeImports(bladeContent) {
+function transformBladeImports(bladeContent) {
     let content = bladeContent;
 
     const formatAsset = (path) => {
@@ -25,3 +25,5 @@ export function transformBladeImports(bladeContent) {
 
     return content;
 }
+
+export { transformBladeImports };
